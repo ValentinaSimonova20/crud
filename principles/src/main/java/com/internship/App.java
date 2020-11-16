@@ -1,11 +1,11 @@
-package internship;
+package com.internship;
 
-import internship.lsp.Animal;
-import internship.lsp.Cat;
-import internship.lsp.Dog;
-import internship.lsp.Speaker;
-import internship.srp.Buzzer;
-import internship.srp.Fizzer;
+import com.internship.lsp.Animal;
+import com.internship.lsp.Cat;
+import com.internship.lsp.Dog;
+import com.internship.lsp.Speaker;
+import com.internship.srp.Buzzer;
+import com.internship.srp.Fizzer;
 
 /**
  * Hello world!

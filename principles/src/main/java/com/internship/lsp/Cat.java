@@ -1,4 +1,4 @@
-package internship.lsp;
+package com.internship.lsp;
 
 public class Cat extends Animal {
     public void meow(){

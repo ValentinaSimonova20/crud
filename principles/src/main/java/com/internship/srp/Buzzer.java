@@ -1,4 +1,4 @@
-package internship.srp;
+package com.internship.srp;
 
 public class Buzzer {
     public void buzz(){

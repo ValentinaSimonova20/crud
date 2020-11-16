@@ -1,4 +1,4 @@
-package internship.lsp;
+package com.internship.lsp;
 
 public class Speaker {
     public void speak(Animal animal){
