@@ -1,3 +1,8 @@
+CREATE DATABASE hr_sample;
+CREATE USER hr_sample_user WITH ENCRYPTED PASSWORD '12345678';
+GRANT ALL PRIVILEGES ON DATABASE hr_sample TO hr_sample_user;
+
+
 CREATE TABLE employees(
     employee_id int PRIMARY KEY,
     first_name varchar(20),
@@ -39,6 +44,7 @@ CREATE TABLE job_history(
     department_id int
 );
 
+/* Primary key из двух полей */
 ALTER TABLE job_history add constraint job_history_pk primary key (employee_id, start_date);
 
 ALTER TABLE departments add constraint fk_departments_locations
@@ -54,6 +60,7 @@ foreign key  (job_id) references jobs (job_id);
 ALTER TABLE employees add constraint fk_employees
 foreign key (manager_id) references employees (employee_id);
 
+/* Добавления столбца для задания 7 */
 ALTER TABLE employees add column commission_pct int;
 
 ALTER TABLE job_history add constraint fk_job_history_jobs
@@ -144,22 +151,127 @@ INSERT INTO employees VALUES (18, 'Canada6','White', 'canada50@gmail.com', '8999
 INSERT INTO employees VALUES (19, 'Canada6','White', 'canada599@gmail.com', '89997736654',
                               '2018-12-10','IT_PROG',55000,1, 50, 30000);
 
+INSERT INTO employees VALUES (20, 'Annn','White', 'canada59999@gmail.com', '89997736654',
+                              '2018-12-10','IT_PROG',55000,1, 50, 30000);
+
+INSERT INTO employees VALUES (21, 'Annn','White', 'canada59999676@gmail.com', '89997736654',
+                              '2018-12-10','IT_PROG',9000,1, 50, 30000);
+
+INSERT INTO employees VALUES (22, 'Annn','White', 'canada599996676@gmail.com', '89997736654',
+                              '2018-12-10','IT_PROG',8000,1, 50, 30000);
+
+INSERT INTO employees VALUES (23, 'Annn','White', 'cana76@gmail.ru', '89997736654',
+                              '2018-12-10','IT_PROG',9008,1, 50, 30000);
+INSERT INTO employees VALUES (24, 'Annn%','White', 'cana76@gmail.ru_', '89997736654',
+                              '2018-12-10','IT_PROG',9008,1, 50, 30000);
 
 
+INSERT INTO employees VALUES (25, '%Annn','White', 'cana76@gmail.ru__', '89997736654',
+                              '2018-12-10','IT_PROG',9008,1, 50, 30000);
+
+INSERT INTO employees VALUES (26, 'An%nn','White', 'cana76@gmail.ru___', '89997736654',
+                              '2018-12-10','IT_PROG',9008,1, 50, 30000);
+
+INSERT INTO employees VALUES (27, 'Annnnnnnnnnnnnn','White', 'cana76@gmail.ru____', '89997736654',
+                              '2018-12-10','IT_PROG',9008,1, 50, 30000);
+
+INSERT INTO employees VALUES (28, 'bob','White', 'bob@gmail.ru', '89997736654',
+                              '2018-12-10','IT_PROG',9008,1, 50, 30000);
+
+INSERT INTO employees VALUES (29, 'Bob','White', 'Bob@gmail.ru____', '89997736654',
+                              '2018-12-10','IT_PROG',9008,1, 50, 30000);
+
+
+insert into job_history values (1,'2020-02-02','2021-12-10',1,3);
+insert into job_history values (2,'2021-02-02','2022-12-10',2,2);
+insert into job_history values (2,'2022-02-02','2023-12-10',1,3);
+insert into job_history values (3,'2018-02-02','2021-12-10',1,1);
+insert into job_history values (3,'2018-12-12','2021-12-10',1,1);
+
+
+/* 1.Получить список с информацией обо всех сотрудниках  */
 SELECT * FROM employees;
 
-
+/* 2.Получить список всех сотрудников с именем 'David' */
 SELECT * FROM employees WHERE first_name='David';
 
+/* 3. Получить список всех сотрудников с job_id равным 'IT_PROG' */
 SELECT * FROM employees WHERE job_id='IT_PROG';
 
+/* 4. Получить список всех сотрудников из 50го отдела (department_id) с зарплатой(salary), большей 4000 */
 SELECT * FROM employees WHERE department_id=50 AND salary>4000;
 
+/* 5. Получить список всех сотрудников из 20го и из 30го отдела (department_id) */
 SELECT * FROM employees WHERE department_id=20 OR department_id=30;
 
+/* 6. Получить список всех сотрудников у которых последняя буква в имени равна 'a'*/
 SELECT * FROM employees WHERE first_name LIKE '%a';
 
+/* 7. Получить список всех сотрудников из 50го и из 80го отдела (department_id) у которых есть бонус (значение в колонке commission_pct не пустое) */
 SELECT * FROM employees WHERE (department_id=50 or department_id=80) AND commission_pct IS NOT NULL;
+
+
+/* 8. Получить список всех сотрудников у которых в имени содержатся минимум 2 буквы 'n' */
+SELECT *,  regexp_matches(first_name,'[n]{2,}') from employees;
+
+/* 9. Получить список всех сотрудников у которых длина имени больше 4 букв */
+SELECT *,  regexp_matches(first_name,'\w{5,}') from employees;
+
+/* 10. Получить список всех сотрудников у которых зарплата находится в промежутке от 8000 до 9000 (включительно) */
+SELECT * from employees where salary between 8000 and 9000;
+
+/* 11. Получить список всех сотрудников у которых в имени содержится символ '%' */
+SELECT * from employees where first_name LIKE '%\%%';
+
+/*12. Получить список всех ID менеджеров*/
+SELECT DISTINCT manager_id from departments;
+
+/*13. Получить список работников с их позициями в формате: Donald(sh_clerk).*/
+SELECT concat(employees.first_name,'(', jobs.job_title,')') from employees, jobs where employees.job_id = jobs.job_id;
+
+/*14. Получить список всех сотрудников у которых длина имени больше 10 букв*/
+SELECT *,  regexp_matches(first_name,'\w{10,}') from employees;
+
+/*15. Получить список всех сотрудников у которых в имени есть буква 'b' (без учета регистра).*/
+SELECT * from employees where  first_name ~* '[b]';
+
+/*16. Получить репорт по department_id с минимальной и максимальной зарплатой,
+с ранней и поздней датой прихода на работу и с количествов сотрудников.
+Сорировать по количеству сотрудников (по убыванию)*/
+select department_id, min(min_salary) as "минимальная зп",
+       max(max_salary) as "максимальная зп",
+       min(start_date) as "ранняя дата прихода на работу",
+       max(start_date) as "поздняя дата прихода на работу",
+       count(employee_id) as employees_amount
+            from
+            job_history inner join jobs
+            on jobs.job_id = job_history.job_id
+group by department_id
+order by employees_amount desc;
+
+/*17. Сколько сотрудников имена которых начинается с одной и той же буквы? Сортировать по количеству. Показывать только те где количество больше 1*/
+
+SELECT count(substr(first_name,1,1)) as employee_amount,substr(first_name,1,1) as letter from employees
+group by substr(first_name,1,1)
+HAVING count(substr(first_name,1,1))>1
+order by employee_amount;
+
+
+/*18. Сколько сотрудников которые работают в одном и том же отделе и получают одинаковую зарплату?*/
+select department_id, salary, count(*) as "кол-во сотрудников" from employees
+group by department_id, salary
+having count(*)>1;
+
+/*19. Получить репорт сколько сотрудников приняли на работу в каждый день недели. Сортировать по количеству*/
+select EXTRACT(DOW FROM start_date) as day_Of_Week,count(employee_id) as employee_Amount from job_history
+group by day_Of_Week
+order by count(employee_id);
+
+
+
+
+
+
 
 
 
